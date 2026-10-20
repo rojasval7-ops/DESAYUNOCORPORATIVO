@@ -91,7 +91,7 @@ a{color:var(--accent)}
 .tcta{font-weight:600;font-size:14px;color:var(--accent)}
 .ticket.sel .tcta{color:var(--text)}
 .ticket.full{cursor:not-allowed}
-.ticket.full .stub{background:var(--gris);color:#fff}
+.ticket.full .stub{filter:saturate(.5);opacity:.78}
 .ttitle{display:block;font-weight:700;font-size:15px;line-height:1.3;color:var(--text);margin-bottom:2px}
 .swatches{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
 .sw{position:relative}
@@ -489,6 +489,7 @@ const I18N = {
   waitlist_line: ['Et contactarem si s’allibera una plaça per al <strong>{date}</strong>.', 'We’ll contact you if a seat becomes available on <strong>{date}</strong>.', 'Te contactaremos si se libera una plaza para el <strong>{date}</strong>.'],
   err_INSCRIPCIONES_CERRADAS: ['Les inscripcions per a aquesta data estan tancades.', 'Registration for this date is closed.', 'Las inscripciones para esta fecha están cerradas.'],
   err_DUPLICADO_ESPERA: ['Aquest correu ja és a la llista d’espera d’aquesta data.', 'This email is already on the waiting list for this date.', 'Este correo ya está en la lista de espera de esta fecha.'],
+  ended: ['Finalitzat', 'Finished', 'Finalizado'],
   regs_label: ['Inscripcions', 'Registration', 'Inscripciones'],
   regs_open: ['Obertes', 'Open', 'Abiertas'],
   regs_closed: ['Tancades', 'Closed', 'Cerradas'],
@@ -1596,7 +1597,7 @@ function vistaFechas() {
           <td data-l="${esc(t('th_place'))}">${esc(d.lugar)}</td>
           <td data-l="${esc(t('th_capacity'))}">${d.aforo}</td>
           <td data-l="${esc(t('th_count'))}">${plazasDe(d.id)}</td>
-          <td data-l="${esc(t('regs_label'))}"><button type="button" class="btn btn-ghost btn-sm" data-act="toggle-ins" data-id="${esc(d.id)}">${esc(t(d.inscripciones_abiertas !== false ? 'regs_open' : 'regs_closed'))}</button></td>
+          <td data-l="${esc(t('regs_label'))}">${d.fecha < hoyISO() ? `<span class="badge">${esc(t('ended'))}</span>` : `<button type="button" class="btn btn-ghost btn-sm" data-act="toggle-ins" data-id="${esc(d.id)}">${esc(t(d.inscripciones_abiertas !== false ? 'regs_open' : 'regs_closed'))}</button>`}</td>
           <td data-l="${esc(t('th_visible'))}"><button type="button" class="btn btn-ghost btn-sm" data-act="toggle-ev" data-id="${esc(d.id)}">${esc(t(d.activo ? 'vis_yes' : 'vis_no'))}</button></td>
           <td class="acc nowrap" data-l="">
             <button type="button" class="btn btn-ghost btn-sm" data-act="edit-ev" data-id="${esc(d.id)}">${esc(t('edit'))}</button>
