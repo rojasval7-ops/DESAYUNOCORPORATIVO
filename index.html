@@ -71,8 +71,8 @@ a{color:var(--accent)}
 .ticket:hover:not(:disabled){border-color:var(--accent)}
 .ticket:focus-visible{outline:3px solid var(--gold);outline-offset:3px}
 .ticket.sel{border-color:var(--gold);box-shadow:0 0 0 2px var(--gold)}
-.stub{display:flex;flex-direction:column;align-items:center;justify-content:center;background:var(--blau);color:#fff;
-  border-radius:13px 0 0 13px;padding:18px 8px;position:relative;border-right:2px dashed rgba(255,255,255,.6)}
+.stub{display:flex;flex-direction:column;align-items:center;justify-content:center;background:var(--stub,var(--blau));color:var(--stub-ink,#fff);
+  border-radius:13px 0 0 13px;padding:18px 8px;position:relative;border-right:2px dashed currentColor}
 .stub::before,.stub::after{content:"";position:absolute;right:-12px;width:22px;height:22px;border-radius:50%;background:var(--bg)}
 .stub::before{top:-12px}.stub::after{bottom:-12px}
 .stub .wd{font-size:12px;opacity:.85}
@@ -91,7 +91,29 @@ a{color:var(--accent)}
 .tcta{font-weight:600;font-size:14px;color:var(--accent)}
 .ticket.sel .tcta{color:var(--text)}
 .ticket.full{cursor:not-allowed}
-.ticket.full .stub{background:var(--gris)}
+.ticket.full .stub{background:var(--gris);color:#fff}
+.ttitle{display:block;font-weight:700;font-size:15px;line-height:1.3;color:var(--text);margin-bottom:2px}
+.swatches{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.sw{position:relative}
+.sw input{position:absolute;opacity:0;width:1px;height:1px}
+.sw span{display:block;width:34px;height:34px;border-radius:50%;background:var(--c);border:3px solid var(--surface);box-shadow:0 0 0 1px var(--line);cursor:pointer}
+.sw input:checked+span{box-shadow:0 0 0 3px var(--text)}
+.sw input:focus-visible+span{outline:3px solid var(--gold);outline-offset:3px}
+.sw-custom{display:inline-flex;align-items:center;gap:8px;font-size:14px;font-weight:600;color:var(--muted)}
+.sw-custom input{width:44px;height:34px;padding:0;border:1px solid var(--line);border-radius:8px;background:none;cursor:pointer}
+.hint{font-size:13px;color:var(--muted);font-weight:400;margin:6px 0 0}
+.preview{max-width:380px}
+.preview .ticket{cursor:default}
+.att{display:inline-flex;gap:6px;flex-wrap:nowrap}
+.att-b{appearance:none;font:inherit;font-size:12px;font-weight:600;border:1px solid var(--line);background:var(--surface);color:var(--muted);border-radius:999px;padding:4px 10px;cursor:pointer}
+.att-b.yes{background:var(--ok);border-color:var(--ok);color:#fff}
+.att-b.no{background:var(--danger);border-color:var(--danger);color:#fff}
+.att-b:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.txt-card{margin-bottom:14px;padding:20px}
+.txt-head{display:flex;align-items:center;gap:10px;justify-content:space-between;margin-bottom:12px}
+.dot{display:inline-block;width:12px;height:12px;border-radius:50%;background:var(--c);vertical-align:-1px;margin-right:8px;box-shadow:0 0 0 1px var(--line)}
+.ev-form-grid{display:grid;gap:24px;grid-template-columns:minmax(0,1fr) minmax(260px,380px);align-items:start}
+@media (max-width:860px){.ev-form-grid{grid-template-columns:1fr}}
 .ticket.full .tcta{color:var(--grana)}
 .empty{background:var(--surface);border:1px dashed var(--line);border-radius:14px;padding:28px;color:var(--muted);margin:0}
 
@@ -251,6 +273,7 @@ td.comment{min-width:200px}
   .tabs{display:grid;grid-template-columns:1fr 1fr;gap:8px;border-bottom:0;overflow:visible}
   .tab{border:1px solid var(--line);border-radius:10px;white-space:normal;text-align:center;padding:10px 8px;font-size:14px;background:var(--surface)}
   .tab[aria-selected="true"]{background:var(--blau);border-color:var(--blau);color:#fff}
+  .tab:last-child:nth-child(odd){grid-column:1 / -1}
   .toolbar>*,.toolbar .btn,.ev-tools .btn{width:100%}
   .toolbar label{display:flex;align-items:center;gap:10px}
   .toolbar label select{flex:1}
@@ -273,6 +296,7 @@ td.comment{min-width:200px}
   .cards td.acc{padding-top:10px;display:flex;justify-content:flex-end;gap:10px}
   .cards td.comment{min-width:0}
   .cards td select{width:100%;padding:8px 10px;font-size:14px}
+  .cards .att{flex-wrap:wrap}
   .cards .link-danger{padding:6px 0}
 }
 
@@ -384,6 +408,7 @@ td.comment{min-width:200px}
         <button class="tab" role="tab" data-tab="reuniones" aria-selected="false" data-i18n="tab_meetings"></button>
         <button class="tab" role="tab" data-tab="eventos" aria-selected="false" data-i18n="tab_events"></button>
         <button class="tab" role="tab" data-tab="fechas" aria-selected="false" data-i18n="tab_dates"></button>
+        <button class="tab" role="tab" data-tab="textos" aria-selected="false" data-i18n="tab_texts"></button>
       </div>
       <div id="tabContenido"></div>
     </section>
@@ -425,6 +450,15 @@ const PRODUCTOS = ['Players Zone','Pitch Row','Loge','Balcony','Premium Seat','V
 const ESTADOS = ['pendiente','contactado','agendada','descartada'];
 const FRANJAS = ['mananas','mediodia','tardes','indiferente'];
 const TIPOS_EVENTO = ['desayuno','evento','otro'];
+// Paleta de colors per a les targetes (colors de la textura blaugrana + or i gris)
+const COLORES = ['#004D98','#00224A','#003A9C','#0E2470','#A50044','#85123F','#5D1535','#EDBB00','#5E6C84'];
+const COLOR_DEFECTO = '#004D98';
+const colorValido = c => /^#[0-9a-f]{6}$/i.test(c || '') ? c : COLOR_DEFECTO;
+const tintaSobre = c => {  // text blanc o fosc segons la lluminositat del fons
+  const [r, g, b] = [1, 3, 5].map(i => parseInt(colorValido(c).slice(i, i + 2), 16) / 255).map(v => v <= .03928 ? v / 12.92 : ((v + .055) / 1.055) ** 2.4);
+  return 0.2126 * r + 0.7152 * g + 0.0722 * b > 0.35 ? '#1A1300' : '#FFFFFF';
+};
+const tituloDe = d => (d && (d['titulo_' + lang] || d.titulo_ca || d.titulo_es || d.titulo_en)) || '';
 const OTRO = 'Otro';          // valor que es guarda quan trien "Un altre"
 const NADIE = '__nadie';      // "Ningú en concret" es guarda com a buit
 const DEMO = !CONFIG.SUPABASE_URL || !CONFIG.SUPABASE_ANON_KEY || !window.supabase;
@@ -446,6 +480,42 @@ const I18N = {
   fact_company: ['Màxim 2 persones per empresa', 'Maximum 2 people per company', 'Máximo 2 personas por empresa'],
   fact_free: ['Assistència gratuïta', 'Free to attend', 'Asistencia gratuita'],
   closed: ['Tancat', 'Closed', 'Cerrado'],
+  join_waitlist: ['Apunta’t a la llista d’espera', 'Join the waiting list', 'Apúntate a la lista de espera'],
+  waitlist_note: ['Aquesta data està completa: <strong>{date}</strong>. Deixa les teves dades a la llista d’espera i et contactarem si s’allibera una plaça.',
+                  'This date is full: <strong>{date}</strong>. Leave your details on the waiting list and we’ll contact you if a seat becomes available.',
+                  'Esta fecha está completa: <strong>{date}</strong>. Deja tus datos en la lista de espera y te contactaremos si se libera una plaza.'],
+  btn_waitlist: ['Apuntar-me a la llista d’espera', 'Join the waiting list', 'Apuntarme a la lista de espera'],
+  waitlist_title: ['Ets a la llista d’espera', 'You’re on the waiting list', 'Estás en la lista de espera'],
+  waitlist_line: ['Et contactarem si s’allibera una plaça per al <strong>{date}</strong>.', 'We’ll contact you if a seat becomes available on <strong>{date}</strong>.', 'Te contactaremos si se libera una plaza para el <strong>{date}</strong>.'],
+  err_INSCRIPCIONES_CERRADAS: ['Les inscripcions per a aquesta data estan tancades.', 'Registration for this date is closed.', 'Las inscripciones para esta fecha están cerradas.'],
+  err_DUPLICADO_ESPERA: ['Aquest correu ja és a la llista d’espera d’aquesta data.', 'This email is already on the waiting list for this date.', 'Este correo ya está en la lista de espera de esta fecha.'],
+  regs_label: ['Inscripcions', 'Registration', 'Inscripciones'],
+  regs_open: ['Obertes', 'Open', 'Abiertas'],
+  regs_closed: ['Tancades', 'Closed', 'Cerradas'],
+  regs_closed_badge: ['Inscripcions tancades', 'Registration closed', 'Inscripciones cerradas'],
+  regs_open_q: ['Inscripcions obertes', 'Registration open', 'Inscripciones abiertas'],
+  max_company: ['Màxim de persones per empresa', 'Max people per company', 'Máximo de personas por empresa'],
+  th_attended: ['Assistència', 'Attendance', 'Asistencia'],
+  att_yes: ['Ha vingut', 'Attended', 'Ha venido'],
+  att_no: ['No ha vingut', 'No-show', 'No ha venido'],
+  att_summary: ['Assistència: {a} de {n}', 'Attendance: {a} of {n}', 'Asistencia: {a} de {n}'],
+  waitlist_h: ['Llista d’espera ({n})', 'Waiting list ({n})', 'Lista de espera ({n})'],
+  move_to_signups: ['Passar a inscrits', 'Move to sign-ups', 'Pasar a inscritos'],
+  t_move_full: ['No hi ha places lliures. Augmenta l’aforament a Gestionar esdeveniments o elimina algun inscrit.', 'No seats available. Increase capacity in Manage events or remove a sign-up.', 'No hay plazas libres. Aumenta el aforo en Gestionar eventos o elimina algún inscrito.'],
+  t_moved: ['Persona passada a inscrits', 'Moved to sign-ups', 'Persona pasada a inscritos'],
+  c_del_esp: ['Vols treure aquesta persona de la llista d’espera?', 'Remove this person from the waiting list?', '¿Quitar a esta persona de la lista de espera?'],
+  t_esp_deleted: ['Eliminat de la llista d’espera', 'Removed from the waiting list', 'Eliminado de la lista de espera'],
+  t_regs_closed: ['Inscripcions tancades', 'Registration closed', 'Inscripciones cerradas'],
+  t_regs_open: ['Inscripcions obertes', 'Registration open', 'Inscripciones abiertas'],
+  tab_texts: ['Textos del web', 'Website texts', 'Textos de la web'],
+  txt_hint: ['Aquí pots canviar els textos principals del web en cada idioma. Si deixes un camp buit, es fa servir el text original (el que veus en gris).',
+             'Here you can change the main website texts in each language. If you leave a field empty, the original text (shown in grey) is used.',
+             'Aquí puedes cambiar los textos principales de la web en cada idioma. Si dejas un campo vacío, se usa el texto original (el que ves en gris).'],
+  txt_custom: ['Personalitzat', 'Customised', 'Personalizado'],
+  txt_reset: ['Restaurar l’original', 'Restore original', 'Restaurar original'],
+  c_txt_reset: ['Vols tornar al text original en tots els idiomes?', 'Go back to the original text in all languages?', '¿Volver al texto original en todos los idiomas?'],
+  t_txt_saved: ['Text desat i publicat al web', 'Text saved and live on the website', 'Texto guardado y publicado en la web'],
+  t_txt_reset: ['Text original restaurat', 'Original text restored', 'Texto original restaurado'],
   closed_cta: ['Inscripcions tancades', 'Registration closed', 'Inscripciones cerradas'],
   step1: ['Tria la data', 'Choose a date', 'Elige fecha'],
   step2: ['Les teves dades', 'Your details', 'Tus datos'],
@@ -460,12 +530,12 @@ const I18N = {
   private_form_title: ['Sol·licitar reunió privada', 'Request a private meeting', 'Solicitar reunión privada'],
   kicker_meet: ['Reunió individual', 'One-to-one meeting', 'Reunión individual'],
   kicker_event: ['Amb els teus clients', 'With your clients', 'Con tus clientes'],
-  event_title: ['Vols organitzar un esmorzar o esdeveniment privat?', 'Want to host a private breakfast or event?', '¿Quieres organizar un desayuno o evento privado?'],
-  event_text: ['Porta els teus clients a l’Spotify Camp Nou. Organitzem un esmorzar o un esdeveniment privat a mida per a tu i els teus convidats.',
-               'Bring your clients to Spotify Camp Nou. We’ll organise a tailored private breakfast or event for you and your guests.',
-               'Trae a tus clientes al Spotify Camp Nou. Organizamos un desayuno o evento privado a medida para ti y tus invitados.'],
-  event_btn: ['Vull organitzar un esmorzar o esdeveniment privat amb els meus clients', 'I’d like to host a private breakfast or event with my clients', 'Quiero organizar un desayuno o evento privado con mis clientes'],
-  event_form_title: ['Sol·licitar esdeveniment privat', 'Request a private event', 'Solicitar evento privado'],
+  event_title: ['Vols organitzar un esmorzar privat?', 'Want to host a private breakfast?', '¿Quieres organizar un desayuno privado?'],
+  event_text: ['Porta els teus clients a l’Spotify Camp Nou. Organitzem un esmorzar privat a mida per a tu i els teus convidats.',
+               'Bring your clients to Spotify Camp Nou. We’ll organise a tailored private breakfast for you and your guests.',
+               'Trae a tus clientes al Spotify Camp Nou. Organizamos un desayuno privado a medida para ti y tus invitados.'],
+  event_btn: ['Vull organitzar un esmorzar privat amb els meus clients', 'I’d like to host a private breakfast with my clients', 'Quiero organizar un desayuno privado con mis clientes'],
+  event_form_title: ['Sol·licitar esmorzar privat', 'Request a private breakfast', 'Solicitar desayuno privado'],
   evt_type_q: ['Què t’agradaria organitzar?', 'What would you like to host?', '¿Qué te gustaría organizar?'],
   evt_desayuno: ['Esmorzar privat', 'Private breakfast', 'Desayuno privado'],
   evt_evento: ['Esdeveniment corporatiu', 'Corporate event', 'Evento corporativo'],
@@ -476,9 +546,9 @@ const I18N = {
   evt_comments_q: ['Explica’ns la teva idea (opcional)', 'Tell us about your idea (optional)', 'Cuéntanos tu idea (opcional)'],
   evt_comments_ph: ['Perfil dels convidats, pressupost aproximat, si voleu visita a l’estadi…', 'Guest profile, approximate budget, whether you’d like a stadium tour…', 'Perfil de los invitados, presupuesto aproximado, si queréis visita al estadio…'],
   btn_event: ['Enviar sol·licitud', 'Send request', 'Enviar solicitud'],
-  evt_req_line: ['Gràcies, {name}. Un comercial et contactarà a {email} o al {phone} per preparar l’esdeveniment.',
-                 'Thank you, {name}. A sales rep will contact you at {email} or on {phone} to plan the event.',
-                 'Gracias, {name}. Un comercial te contactará en {email} o en el {phone} para preparar el evento.'],
+  evt_req_line: ['Gràcies, {name}. Un comercial et contactarà a {email} o al {phone} per preparar l’esmorzar.',
+                 'Thank you, {name}. A sales rep will contact you at {email} or on {phone} to plan the breakfast.',
+                 'Gracias, {name}. Un comercial te contactará en {email} o en el {phone} para preparar el desayuno.'],
   tab_events: ['Esdeveniments privats', 'Private events', 'Eventos privados'],
   th_event: ['Tipus', 'Type', 'Tipo'],
   th_guests: ['Convidats', 'Guests', 'Invitados'],
@@ -586,7 +656,7 @@ const I18N = {
   logout: ['Tancar sessió', 'Sign out', 'Cerrar sesión'],
   tab_breakfasts: ['Esmorzars', 'Breakfasts', 'Desayunos'],
   tab_meetings: ['Reunions privades', 'Private meetings', 'Reuniones privadas'],
-  tab_dates: ['Gestionar dates', 'Manage dates', 'Gestionar fechas'],
+  tab_dates: ['Gestionar esdeveniments', 'Manage events', 'Gestionar eventos'],
   loading_data: ['Carregant dades…', 'Loading data…', 'Cargando datos…'],
   data_error: ['No s’han pogut carregar les dades. Comprova la sessió i prem Actualitzar.', 'Data couldn’t be loaded. Check your session and press Refresh.', 'No se han podido cargar los datos. Comprueba tu sesión y pulsa Actualizar.'],
   kpi_none: ['Sense data', 'No date', 'Sin fecha'],
@@ -634,10 +704,27 @@ const I18N = {
   th_capacity: ['Aforament', 'Capacity', 'Aforo'],
   th_count: ['Inscrits', 'Sign-ups', 'Inscritos'],
   th_visible: ['Visible al web', 'Visible on website', 'Visible en la web'],
-  add_breakfast: ['Afegir un esmorzar', 'Add a breakfast', 'Añadir un desayuno'],
+  add_breakfast: ['Nou esdeveniment', 'New event', 'Nuevo evento'],
+  edit_event: ['Editar esdeveniment', 'Edit event', 'Editar evento'],
+  btn_save: ['Desar canvis', 'Save changes', 'Guardar cambios'],
+  btn_cancel: ['Cancel·lar', 'Cancel', 'Cancelar'],
+  edit: ['Editar', 'Edit', 'Editar'],
+  duplicate: ['Duplicar', 'Duplicate', 'Duplicar'],
+  th_title: ['Títol', 'Title', 'Título'],
+  title_opt: ['Títol de la targeta (opcional)', 'Card title (optional)', 'Título de la tarjeta (opcional)'],
+  title_hint: ['Si el deixes buit, la targeta mostra només la data i l’horari. Si només l’omples en un idioma, es fa servir en tots.',
+               'If left empty, the card shows only the date and time. If you fill in just one language, it’s used for all.',
+               'Si lo dejas vacío, la tarjeta muestra solo la fecha y el horario. Si solo lo rellenas en un idioma, se usa en todos.'],
+  title_ph: ['Ex.: Esmorzar VIP de Nadal', 'E.g. VIP Christmas Breakfast', 'Ej.: Desayuno VIP de Navidad'],
+  color: ['Color de la targeta', 'Card colour', 'Color de la tarjeta'],
+  custom_color: ['Personalitzat', 'Custom', 'Personalizado'],
+  preview: ['Vista prèvia', 'Preview', 'Vista previa'],
+  t_saved_ev: ['Esdeveniment actualitzat', 'Event updated', 'Evento actualizado'],
+  t_dup: ['Dades copiades. Tria la nova data i desa.', 'Details copied. Pick the new date and save.', 'Datos copiados. Elige la nueva fecha y guarda.'],
+  t_aforo_low: ['L’aforament no pot ser inferior a les {n} persones ja inscrites.', 'Capacity can’t be lower than the {n} people already signed up.', 'El aforo no puede ser inferior a las {n} personas ya inscritas.'],
   f_start: ['Comença', 'Starts', 'Empieza'],
   f_end: ['Acaba', 'Ends', 'Termina'],
-  btn_add: ['Afegir data', 'Add date', 'Añadir fecha'],
+  btn_add: ['Afegir esdeveniment', 'Add event', 'Añadir evento'],
   vis_yes: ['Sí, amagar', 'Yes, hide', 'Sí, ocultar'],
   vis_no: ['No, mostrar', 'No, show', 'No, mostrar'],
   t_updated: ['Dades actualitzades', 'Data refreshed', 'Datos actualizados'],
@@ -650,8 +737,8 @@ const I18N = {
   t_saved: ['Canvi desat', 'Change saved', 'Cambio guardado'],
   t_save_error: ['No s’ha pogut desar el canvi.', 'The change couldn’t be saved.', 'No se ha podido guardar el cambio.'],
   t_end_after: ['L’hora de final ha de ser posterior a la d’inici.', 'The end time must be after the start time.', 'La hora de fin debe ser posterior a la de inicio.'],
-  t_added: ['Data afegida i visible al web', 'Date added and visible on the website', 'Fecha añadida y visible en la web'],
-  t_create_error: ['No s’ha pogut crear la data.', 'The date couldn’t be created.', 'No se ha podido crear la fecha.'],
+  t_added: ['Esdeveniment afegit i visible al web', 'Event added and visible on the website', 'Evento añadido y visible en la web'],
+  t_create_error: ['No s’ha pogut desar l’esdeveniment.', 'The event couldn’t be saved.', 'No se ha podido guardar el evento.'],
   c_del_ins: ['Vols eliminar la inscripció de {name}? La seva plaça quedarà lliure.', 'Delete {name}’s sign-up? Their seat will become available.', '¿Eliminar la inscripción de {name}? Su plaza quedará libre.'],
   c_del_reu: ['Vols eliminar aquesta sol·licitud de reunió?', 'Delete this meeting request?', '¿Eliminar esta solicitud de reunión?'],
   c_del_ev_n: ['Aquesta data té {n} inscrits. Si l’elimines, també s’esborraran les seves inscripcions. Vols continuar?',
@@ -668,11 +755,31 @@ let lang = (() => {
   try { const s = localStorage.getItem('fcb_esmorzars_lang'); if (IDIOMAS.includes(s)) return s; } catch (e) {}
   return CONFIG.IDIOMA_DEFECTO;
 })();
+// Textos personalitzats des del tauler (taula "textos"); si no n'hi ha, s'usa I18N
+let TEXTOS = {};
+const TEXTOS_EDITABLES = [
+  ['hero_title', ['Títol principal', 'Main title', 'Título principal']],
+  ['hero_lead', ['Descripció principal', 'Main description', 'Descripción principal']],
+  ['fact_places', ['Etiqueta 1', 'Label 1', 'Etiqueta 1']],
+  ['fact_company', ['Etiqueta 2', 'Label 2', 'Etiqueta 2']],
+  ['fact_free', ['Etiqueta 3', 'Label 3', 'Etiqueta 3']],
+  ['kicker_meet', ['Reunió privada: avantítol', 'Private meeting: kicker', 'Reunión privada: antetítulo']],
+  ['private_title', ['Reunió privada: títol', 'Private meeting: title', 'Reunión privada: título']],
+  ['private_text', ['Reunió privada: text', 'Private meeting: text', 'Reunión privada: texto']],
+  ['private_btn', ['Reunió privada: botó', 'Private meeting: button', 'Reunión privada: botón']],
+  ['kicker_event', ['Esmorzar privat: avantítol', 'Private breakfast: kicker', 'Desayuno privado: antetítulo']],
+  ['event_title', ['Esmorzar privat: títol', 'Private breakfast: title', 'Desayuno privado: título']],
+  ['event_text', ['Esmorzar privat: text', 'Private breakfast: text', 'Desayuno privado: texto']],
+  ['event_btn', ['Esmorzar privat: botó', 'Private breakfast: button', 'Desayuno privado: botón']]
+];
+const textoPropio = k => { const o = TEXTOS[k]; return o && o[lang] && o[lang].trim() ? o[lang] : null; };
 function t(k, v = {}) {
   const fila = I18N[k];
-  let s = fila ? fila[IDIOMAS.indexOf(lang)] : k;
+  let s = textoPropio(k) ?? (fila ? fila[IDIOMAS.indexOf(lang)] : k);
   return s.replace(/\{(\w+)\}/g, (_, x) => v[x] ?? '');
 }
+// Per a textos amb salts de línia (títol principal): el text propi s'escapa i els salts es converteixen en <br>
+const tHtml = k => { const p = textoPropio(k); return p ? esc(p).replace(/\n/g, '<br>') : t(k); };
 const tx = k => `data-i18n="${k}">${esc(t(k))}`;
 
 /* ---------- Utilitats ---------- */
@@ -702,11 +809,11 @@ function codigoDe(e) {
   if (e.codigo) return e.codigo;
   if (e.code === '23505') return 'DUPLICADO';
   const m = String(e.message || '');
-  for (const c of ['PLAZAS_INSUFICIENTES','AFORO_COMPLETO','LIMITE_EMPRESA','DESAYUNO_NO_DISPONIBLE','DESAYUNO_PASADO','NO_ADMIN']) if (m.includes(c)) return c;
+  for (const c of ['INSCRIPCIONES_CERRADAS','PLAZAS_INSUFICIENTES','AFORO_COMPLETO','LIMITE_EMPRESA','DESAYUNO_NO_DISPONIBLE','DESAYUNO_PASADO','NO_ADMIN']) if (m.includes(c)) return c;
   if (/invalid login|invalid credentials/i.test(m)) return 'LOGIN';
   return 'DEFAULT';
 }
-const mensajeError = code => t('err_' + code, { n: CONFIG.MAX_POR_EMPRESA });
+const mensajeError = code => t('err_' + code, { n: (state.sel && state.sel.max_por_empresa) || CONFIG.MAX_POR_EMPRESA });
 
 /* =====================================================================
    CAPA DE DADES — Supabase o demo (localStorage)
@@ -717,6 +824,8 @@ function apiSupabase() {
   return {
     async disponibles() { return ok(await sb.rpc('desayunos_disponibles')) || []; },
     async inscribir(n) { ok(await sb.from('inscripciones').insert(n)); },
+    async unirseEspera(n) { ok(await sb.from('lista_espera').insert(n)); },
+    async textos() { return ok(await sb.from('textos').select('*')) || []; },
     async reunion(n) { ok(await sb.from('reuniones').insert(n)); },
     async evento(n) { ok(await sb.from('eventos_privados').insert(n)); },
     async login(email, password) {
@@ -732,13 +841,15 @@ function apiSupabase() {
     },
     async logout() { await sb.auth.signOut(); },
     async todo() {
-      const [d, i, r, ep] = await Promise.all([
+      const [d, i, r, ep, le, tx] = await Promise.all([
         sb.from('desayunos').select('*').order('fecha'),
         sb.from('inscripciones').select('*').order('created_at'),
         sb.from('reuniones').select('*').order('created_at', { ascending: false }),
-        sb.from('eventos_privados').select('*').order('created_at', { ascending: false })
+        sb.from('eventos_privados').select('*').order('created_at', { ascending: false }),
+        sb.from('lista_espera').select('*').order('created_at'),
+        sb.from('textos').select('*')
       ]);
-      return { desayunos: ok(d), inscripciones: ok(i), reuniones: ok(r), eventos: ok(ep) };
+      return { desayunos: ok(d), inscripciones: ok(i), reuniones: ok(r), eventos: ok(ep), espera: ok(le), textos: ok(tx) };
     },
     async crearDesayuno(x) { ok(await sb.from('desayunos').insert(x)); },
     async actualizarDesayuno(id, c) { ok(await sb.from('desayunos').update(c).eq('id', id)); },
@@ -747,16 +858,25 @@ function apiSupabase() {
     async actualizarReunion(id, c) { ok(await sb.from('reuniones').update(c).eq('id', id)); },
     async borrarReunion(id) { ok(await sb.from('reuniones').delete().eq('id', id)); },
     async actualizarEvento(id, c) { ok(await sb.from('eventos_privados').update(c).eq('id', id)); },
-    async borrarEvento(id) { ok(await sb.from('eventos_privados').delete().eq('id', id)); }
+    async borrarEvento(id) { ok(await sb.from('eventos_privados').delete().eq('id', id)); },
+    async actualizarInscripcion(id, c) { ok(await sb.from('inscripciones').update(c).eq('id', id)); },
+    async moverEspera(e) {
+      const { id, created_at, ...datos } = e;
+      ok(await sb.from('inscripciones').insert(datos));
+      ok(await sb.from('lista_espera').delete().eq('id', id));
+    },
+    async borrarEspera(id) { ok(await sb.from('lista_espera').delete().eq('id', id)); },
+    async guardarTexto(clave, v) { ok(await sb.from('textos').upsert({ clave, ...v, updated_at: new Date().toISOString() })); },
+    async borrarTexto(clave) { ok(await sb.from('textos').delete().eq('clave', clave)); }
   };
 }
 
 function apiDemo() {
-  const KEY = 'fcb_esmorzars_vip_demo_v5';
+  const KEY = 'fcb_esmorzars_vip_demo_v7';
   let mem = null, logueado = false;
   const masDias = n => { const d = new Date(); d.setDate(d.getDate() + n); return isoLocal(d); };
   function semilla() {
-    const ev = ['2026-10-15', '2026-11-20', '2026-12-15'].map(f => ({ id: uid(), fecha: f, hora_inicio: '09:00', hora_fin: '10:30', lugar: CONFIG.LUGAR_DEFECTO, aforo: 25, activo: true }));
+    const ev = ['2026-10-15', '2026-11-20', '2026-12-15'].map(f => ({ id: uid(), fecha: f, hora_inicio: '09:00', hora_fin: '10:30', lugar: CONFIG.LUGAR_DEFECTO, aforo: 25, activo: true, color: COLOR_DEFECTO }));
     const nombres = ['Marta','Jordi','Laura','Pau','Núria','Albert','Clara','Oriol','Sara','Marc','Anna','David','Elena','Xavier','Irene','Sergi'];
     const apellidos = ['Puig','Vidal','Soler','Ferrer','Roca','Casas','Font','Serra','Riera','Mas'];
     const empresas = ['Grup Mediterrània','Iberlogística','Casals Advocats','Nexa Energia','Tecnova','Hotel Diagonal','Farma Ribera','Banca Litoral','Assegurances Montjuïc','Immobiliària Sants','Costa Brava Foods','Arq. Gràcia','Moda Born'];
@@ -796,6 +916,8 @@ function apiDemo() {
     try { mem = JSON.parse(localStorage.getItem(KEY)); } catch (e) { mem = null; }
     if (!mem || !Array.isArray(mem.desayunos)) { mem = semilla(); save(); }
     if (!Array.isArray(mem.eventos)) { mem.eventos = []; save(); }
+    if (!Array.isArray(mem.espera)) { mem.espera = []; save(); }
+    if (!Array.isArray(mem.textos)) { mem.textos = []; save(); }
     return mem;
   };
   const clon = x => JSON.parse(JSON.stringify(x));
@@ -804,18 +926,19 @@ function apiDemo() {
       const d = load(), desde = hoyISO().slice(0, 8) + '01';
       return d.desayunos.filter(x => x.activo && x.fecha >= desde)
         .sort((a, b) => a.fecha.localeCompare(b.fecha))
-        .map(x => ({ ...x, ocupadas: plazas(d.inscripciones.filter(i => i.desayuno_id === x.id)) }));
+        .map(x => ({ inscripciones_abiertas: true, max_por_empresa: CONFIG.MAX_POR_EMPRESA, ...x, ocupadas: plazas(d.inscripciones.filter(i => i.desayuno_id === x.id)) }));
     },
-    async inscribir(n) {
+    async inscribir(n, esAdmin = false) {
       const d = load(); const ev = d.desayunos.find(x => x.id === n.desayuno_id);
       if (!ev || !ev.activo) throw errCode('DESAYUNO_NO_DISPONIBLE');
+      if (ev.inscripciones_abiertas === false && !esAdmin) throw errCode('INSCRIPCIONES_CERRADAS');
       if (ev.fecha < hoyISO()) throw errCode('DESAYUNO_PASADO');
       const ins = d.inscripciones.filter(i => i.desayuno_id === ev.id);
       const ocup = plazas(ins), pide = n.asistentes || 1;
       if (ocup >= ev.aforo) throw errCode('AFORO_COMPLETO');
       if (ocup + pide > ev.aforo) throw errCode('PLAZAS_INSUFICIENTES');
       if (ins.some(i => i.email === n.email)) throw errCode('DUPLICADO');
-      if (n.tipo === 'empresa' && plazas(ins.filter(i => i.tipo === 'empresa' && norm(i.empresa) === norm(n.empresa))) + pide > CONFIG.MAX_POR_EMPRESA) throw errCode('LIMITE_EMPRESA');
+      if (n.tipo === 'empresa' && plazas(ins.filter(i => i.tipo === 'empresa' && norm(i.empresa) === norm(n.empresa))) + pide > (ev.max_por_empresa || CONFIG.MAX_POR_EMPRESA)) throw errCode('LIMITE_EMPRESA');
       d.inscripciones.push({ ...n, id: uid(), created_at: new Date().toISOString() }); save();
     },
     async reunion(n) { const d = load(); d.reuniones.unshift({ ...n, id: uid(), estado: 'pendiente', created_at: new Date().toISOString() }); save(); },
@@ -825,13 +948,31 @@ function apiDemo() {
     async todo() { return clon(load()); },
     async crearDesayuno(x) { const d = load(); d.desayunos.push({ ...x, id: uid(), activo: true }); save(); },
     async actualizarDesayuno(id, c) { const d = load(); Object.assign(d.desayunos.find(x => x.id === id) || {}, c); save(); },
-    async borrarDesayuno(id) { const d = load(); d.desayunos = d.desayunos.filter(x => x.id !== id); d.inscripciones = d.inscripciones.filter(i => i.desayuno_id !== id); save(); },
+    async borrarDesayuno(id) { const d = load(); d.desayunos = d.desayunos.filter(x => x.id !== id); d.inscripciones = d.inscripciones.filter(i => i.desayuno_id !== id); d.espera = d.espera.filter(i => i.desayuno_id !== id); save(); },
     async borrarInscripcion(id) { const d = load(); d.inscripciones = d.inscripciones.filter(i => i.id !== id); save(); },
     async actualizarReunion(id, c) { const d = load(); Object.assign(d.reuniones.find(x => x.id === id) || {}, c); save(); },
     async borrarReunion(id) { const d = load(); d.reuniones = d.reuniones.filter(x => x.id !== id); save(); },
     async evento(n) { const d = load(); d.eventos.unshift({ ...n, id: uid(), estado: 'pendiente', created_at: new Date().toISOString() }); save(); },
     async actualizarEvento(id, c) { const d = load(); Object.assign(d.eventos.find(x => x.id === id) || {}, c); save(); },
-    async borrarEvento(id) { const d = load(); d.eventos = d.eventos.filter(x => x.id !== id); save(); }
+    async borrarEvento(id) { const d = load(); d.eventos = d.eventos.filter(x => x.id !== id); save(); },
+    async unirseEspera(n) {
+      const d = load(); const ev = d.desayunos.find(x => x.id === n.desayuno_id);
+      if (!ev || !ev.activo) throw errCode('DESAYUNO_NO_DISPONIBLE');
+      if (ev.inscripciones_abiertas === false) throw errCode('INSCRIPCIONES_CERRADAS');
+      if (ev.fecha < hoyISO()) throw errCode('DESAYUNO_PASADO');
+      if (d.espera.some(x => x.desayuno_id === ev.id && x.email === n.email)) throw errCode('DUPLICADO');
+      d.espera.push({ ...n, id: uid(), created_at: new Date().toISOString() }); save();
+    },
+    async textos() { return clon(load().textos); },
+    async actualizarInscripcion(id, c) { const d = load(); Object.assign(d.inscripciones.find(x => x.id === id) || {}, c); save(); },
+    async moverEspera(e) {
+      const { id, created_at, ...datos } = e;
+      await this.inscribir(datos, true);
+      const d = load(); d.espera = d.espera.filter(x => x.id !== id); save();
+    },
+    async borrarEspera(id) { const d = load(); d.espera = d.espera.filter(x => x.id !== id); save(); },
+    async guardarTexto(clave, v) { const d = load(); d.textos = d.textos.filter(x => x.clave !== clave).concat([{ clave, ...v }]); save(); },
+    async borrarTexto(clave) { const d = load(); d.textos = d.textos.filter(x => x.clave !== clave); save(); }
   };
 }
 
@@ -960,45 +1101,56 @@ async function cargarPublico() {
   ajustarAsistentes();
 }
 
+function ticketHTML(d, sel = false) {
+  const pct = Math.min(100, Math.round((d.ocupadas / d.aforo) * 100));
+  const lleno = d.ocupadas >= d.aforo;
+  const pasado = d.fecha < hoyISO();
+  const abierta = d.inscripciones_abiertas !== false;
+  const espera = lleno && !pasado && abierta;          // completa però s'admet llista d'espera
+  const cerrado = pasado || !abierta;                   // no es pot seleccionar
+  const libres = Math.max(0, d.aforo - d.ocupadas);
+  const cls = ['ticket', (lleno || cerrado) ? 'full' : '', sel ? 'sel' : '', !lleno && pct >= 80 ? 'casi' : ''].join(' ');
+  const resto = lleno ? t('complete') : cerrado ? t('closed') : libres === 1 ? t('left_1') : t('left_n', { n: libres });
+  const cta = pasado ? (lleno ? t('no_seats') : t('closed_cta')) : !abierta ? t('closed_cta') : sel ? t('chosen') : espera ? t('join_waitlist') : t('choose');
+  const color = colorValido(d.color);
+  const titulo = tituloDe(d);
+  return `
+    <button type="button" class="${cls}" data-id="${esc(d.id || '')}" ${cerrado ? 'disabled' : ''} aria-pressed="${!!sel}"
+      aria-label="${titulo ? esc(titulo) + ', ' : ''}${esc(cap(fechaLarga(d.fecha)))}, ${esc(t('occupied', { p: pct }))}, ${esc(resto)}">
+      <span class="stub" style="--stub:${color};--stub-ink:${tintaSobre(color)}">
+        <span class="wd">${esc(cap(fecha(d.fecha, { weekday: 'long' })))}</span>
+        <span class="day">${esc(fecha(d.fecha, { day: 'numeric' }))}</span>
+        <span class="mo">${esc(fecha(d.fecha, { month: 'short' }).replace('.', ''))} ${esc(fecha(d.fecha, { year: '2-digit' }))}</span>
+      </span>
+      <span class="tbody">
+        <span class="tmeta">${titulo ? `<span class="ttitle">${esc(titulo)}</span>` : ''}<strong>${esc(t('time_range', { a: hora(d.hora_inicio), b: hora(d.hora_fin) }))}</strong><span>${esc(d.lugar)}</span></span>
+        <span>
+          <span class="bar"><i style="width:${pct}%"></i></span>
+          <span class="aforo-txt"><strong>${esc(t('occupied', { p: pct }))}</strong><span>${esc(resto)}</span></span>
+        </span>
+        <span class="tcta">${esc(cta)}</span>
+      </span>
+    </button>`;
+}
+
 function renderTickets() {
   const el = $('#tickets');
   if (state.cargaError) { el.innerHTML = `<p class="empty">${esc(t('dates_error'))}</p>`; return; }
   if (!state.desayunos.length) { el.innerHTML = `<p class="empty">${esc(t('no_dates'))}</p>`; return; }
-  el.innerHTML = state.desayunos.map(d => {
-    const pct = Math.min(100, Math.round((d.ocupadas / d.aforo) * 100));
-    const lleno = d.ocupadas >= d.aforo;
-    const pasado = d.fecha < hoyISO();
-    const cerrado = lleno || pasado;
-    const libres = Math.max(0, d.aforo - d.ocupadas);
-    const sel = state.sel && state.sel.id === d.id;
-    const cls = ['ticket', cerrado ? 'full' : '', sel ? 'sel' : '', !lleno && pct >= 80 ? 'casi' : ''].join(' ');
-    const resto = lleno ? t('complete') : pasado ? t('closed') : libres === 1 ? t('left_1') : t('left_n', { n: libres });
-    return `
-      <button type="button" class="${cls}" data-id="${esc(d.id)}" ${cerrado ? 'disabled' : ''} aria-pressed="${!!sel}"
-        aria-label="${esc(cap(fechaLarga(d.fecha)))}, ${esc(t('occupied', { p: pct }))}${lleno ? ', ' + esc(t('complete')) : pasado ? ', ' + esc(t('closed')) : ''}">
-        <span class="stub">
-          <span class="wd">${esc(cap(fecha(d.fecha, { weekday: 'long' })))}</span>
-          <span class="day">${esc(fecha(d.fecha, { day: 'numeric' }))}</span>
-          <span class="mo">${esc(fecha(d.fecha, { month: 'short' }).replace('.', ''))} ${esc(fecha(d.fecha, { year: '2-digit' }))}</span>
-        </span>
-        <span class="tbody">
-          <span class="tmeta"><strong>${esc(t('time_range', { a: hora(d.hora_inicio), b: hora(d.hora_fin) }))}</strong><span>${esc(d.lugar)}</span></span>
-          <span>
-            <span class="bar"><i style="width:${pct}%"></i></span>
-            <span class="aforo-txt"><strong>${esc(t('occupied', { p: pct }))}</strong><span>${esc(resto)}</span></span>
-          </span>
-          <span class="tcta">${esc(lleno ? t('no_seats') : pasado ? t('closed_cta') : sel ? t('chosen') : t('choose'))}</span>
-        </span>
-      </button>`;
-  }).join('');
+  el.innerHTML = state.desayunos.map(d => ticketHTML(d, state.sel && state.sel.id === d.id)).join('');
 }
 
+const modoEspera = () => !!state.sel && state.sel.ocupadas >= state.sel.aforo;
+
 function ajustarAsistentes() {
-  const sel = $('#formInscripcion select[name="asistentes"]');
+  const form = $('#formInscripcion');
+  const sel = form && form.querySelector('select[name="asistentes"]');
   if (!sel || !state.sel) return;
   const libres = state.sel.aforo - state.sel.ocupadas;
+  const esEmpresa = (form.querySelector('input[name="tipo"]:checked') || {}).value === 'empresa';
+  const maxEmpresa = state.sel.max_por_empresa || CONFIG.MAX_POR_EMPRESA;
   const op2 = sel.querySelector('option[value="2"]');
-  op2.disabled = libres < 2;
+  op2.disabled = (!modoEspera() && libres < 2) || (esEmpresa && maxEmpresa < 2);
   if (op2.disabled && sel.value === '2') sel.value = '1';
 }
 
@@ -1006,8 +1158,13 @@ function renderNotaFecha() {
   ajustarAsistentes();
   if (!state.sel) return;
   const d = state.sel;
-  $('#fechaElegida').innerHTML = t('chosen_note', { date: esc(fechaLarga(d.fecha)), a: esc(hora(d.hora_inicio)), b: esc(hora(d.hora_fin)), place: esc(d.lugar) });
+  $('#fechaElegida').innerHTML = modoEspera()
+    ? t('waitlist_note', { date: esc(fechaLarga(d.fecha)) })
+    : t('chosen_note', { date: esc(fechaLarga(d.fecha)), a: esc(hora(d.hora_inicio)), b: esc(hora(d.hora_fin)), place: esc(d.lugar) });
+  const btn = $('#formInscripcion button[type="submit"]');
+  if (btn && !btn.disabled) { btn.dataset.i18n = modoEspera() ? 'btn_waitlist' : 'btn_reserve'; btn.textContent = t(btn.dataset.i18n); }
 }
+document.addEventListener('change', e => { if (e.target.name === 'tipo' && e.target.closest('#formInscripcion')) ajustarAsistentes(); });
 
 $('#tickets').addEventListener('click', e => {
   const b = e.target.closest('.ticket');
@@ -1033,6 +1190,17 @@ function restaurarFormInscripcion() {
 function renderConfirmIns() {
   const c = state.confIns; if (!c) return;
   const nombre = `${c.nombre} ${c.apellido}${c.empresa ? ' (' + c.empresa + ')' : ''}`;
+  if (c.espera) {
+    $('#cardInscripcion').innerHTML = `
+      <div class="confirm">
+        <h3>${esc(t('waitlist_title'))}</h3>
+        <p>${t('waitlist_line', { date: esc(fechaLarga(c.ev.fecha)) })}</p>
+        <p>${esc(t('confirm_name', { name: nombre }))}${c.asistentes === 2 ? ' ' + esc(t('confirm_people', { n: 2 })) : ''}</p>
+        <div class="actions"><button type="button" class="btn btn-ghost" id="otraPersona">${esc(t('another'))}</button></div>
+      </div>`;
+    $('#otraPersona').addEventListener('click', () => { restaurarFormInscripcion(); renderNotaFecha(); $('#formInscripcion input[name="nombre"]').focus(); });
+    return;
+  }
   $('#cardInscripcion').innerHTML = `
     <div class="confirm">
       <h3>${esc(t('confirm_title'))}</h3>
@@ -1040,7 +1208,7 @@ function renderConfirmIns() {
       <p>${esc(t('confirm_name', { name: nombre }))}${c.asistentes === 2 ? ' ' + esc(t('confirm_people', { n: 2 })) : ''}</p>
       <div class="actions"><button type="button" class="btn btn-ghost" id="otraPersona">${esc(t('another'))}</button></div>
     </div>`;
-  $('#otraPersona').addEventListener('click', () => { restaurarFormInscripcion(); ajustarAsistentes(); $('#formInscripcion input[name="nombre"]').focus(); });
+  $('#otraPersona').addEventListener('click', () => { restaurarFormInscripcion(); renderNotaFecha(); $('#formInscripcion input[name="nombre"]').focus(); });
 }
 
 function renderConfirmReu() {
@@ -1092,19 +1260,21 @@ async function enviarInscripcion(e) {
   if (!state.sel) { mostrarError(form, 'SIN_FECHA'); return; }
   const btn = form.querySelector('button[type="submit"]');
   const datos = { ...leerContacto(form), desayuno_id: state.sel.id, asistentes: parseInt(new FormData(form).get('asistentes'), 10) === 2 ? 2 : 1 };
-  btn.disabled = true; btn.textContent = t('btn_reserving'); mostrarError(form, '');
+  const espera = modoEspera();
+  btn.disabled = true; btn.textContent = t(espera ? 'btn_sending' : 'btn_reserving'); mostrarError(form, '');
   try {
-    await api.inscribir(datos);
-    state.confIns = { ...datos, ev: state.sel };
+    if (espera) await api.unirseEspera(datos); else await api.inscribir(datos);
+    state.confIns = { ...datos, ev: state.sel, espera };
     renderConfirmIns();
     $('#paso2').scrollIntoView({ block: 'start' });
     cargarPublico();
   } catch (err) {
     console.error(err);
-    const code = codigoDe(err);
+    let code = codigoDe(err);
+    if (espera && code === 'DUPLICADO') code = 'DUPLICADO_ESPERA';
     mostrarError(form, code);
-    btn.disabled = false; btn.textContent = t('btn_reserve');
-    if (code === 'AFORO_COMPLETO') cargarPublico();
+    btn.disabled = false; btn.textContent = t(espera ? 'btn_waitlist' : 'btn_reserve');
+    if (['AFORO_COMPLETO', 'PLAZAS_INSUFICIENTES', 'INSCRIPCIONES_CERRADAS'].includes(code)) cargarPublico().then(renderNotaFecha);
   }
 }
 
@@ -1142,7 +1312,7 @@ document.querySelectorAll('[data-abrir]').forEach(btn => btn.addEventListener('c
    VISTA ADMIN
    ===================================================================== */
 let D = null;
-const adminState = { tab: 'desayunos', filtro: { reuniones: '', eventos: '' }, loginErr: '' };
+const adminState = { tab: 'desayunos', filtro: { reuniones: '', eventos: '' }, loginErr: '', borrador: null, txtDraft: {} };
 
 async function initAdmin() {
   $('#loginNota').textContent = t(DEMO ? 'login_note_demo' : 'login_note');
@@ -1172,7 +1342,7 @@ $('#formLogin').addEventListener('submit', async e => {
 
 async function cargarAdmin() {
   $('#tabContenido').innerHTML = `<p class="empty">${esc(t('loading_data'))}</p>`;
-  try { D = await api.todo(); }
+  try { D = await api.todo(); TEXTOS = Object.fromEntries((D.textos || []).map(r => [r.clave, r])); }
   catch (e) { console.error(e); D = null; $('#tabContenido').innerHTML = `<p class="empty">${esc(t('data_error'))}</p>`; return; }
   renderKpis(); renderTab();
 }
@@ -1207,11 +1377,20 @@ function renderTab() {
   if (adminState.tab === 'reuniones') c.innerHTML = vistaSolicitudes('reuniones');
   if (adminState.tab === 'eventos') c.innerHTML = vistaSolicitudes('eventos');
   if (adminState.tab === 'fechas') c.innerHTML = vistaFechas();
+  if (adminState.tab === 'textos') c.innerHTML = vistaTextos();
   abiertos.forEach(id => { const d = c.querySelector(`details[data-id="${id}"]`); if (d) d.open = true; });
 }
 
+const esperaDe = id => (D.espera || []).filter(x => x.desayuno_id === id).sort((a, b) => a.created_at.localeCompare(b.created_at));
+const attBtns = i => `<span class="att">
+  <button type="button" class="att-b ${i.asistio === true ? 'yes' : ''}" data-act="asis" data-v="1" data-id="${esc(i.id)}" aria-pressed="${i.asistio === true}">${esc(t('att_yes'))}</button>
+  <button type="button" class="att-b ${i.asistio === false ? 'no' : ''}" data-act="asis" data-v="0" data-id="${esc(i.id)}" aria-pressed="${i.asistio === false}">${esc(t('att_no'))}</button></span>`;
+
 function filaEvento(d, past) {
   const ins = insDe(d.id);
+  const esp = esperaDe(d.id);
+  const marcados = ins.filter(i => i.asistio !== null && i.asistio !== undefined);
+  const vinieron = plazas(ins.filter(i => i.asistio === true));
   const ocup = plazas(ins);
   const pct = Math.min(100, Math.round((ocup / d.aforo) * 100));
   const lleno = ocup >= d.aforo;
@@ -1223,7 +1402,7 @@ function filaEvento(d, past) {
     <summary>
       <span><span class="evdate">${esc(cap(fecha(d.fecha, { weekday: 'short', day: 'numeric', month: 'long', year: 'numeric' })))}</span><br>
         <span class="evsub">${esc(t('time_range', { a: hora(d.hora_inicio), b: hora(d.hora_fin) }))}</span></span>
-      <span class="evsub hide-m">${esc(d.lugar)}${d.activo ? '' : `<br><span class="badge">${esc(t('hidden_badge'))}</span>`}</span>
+      <span class="evsub hide-m">${esc(tituloDe(d) || d.lugar)}${d.activo ? '' : `<br><span class="badge">${esc(t('hidden_badge'))}</span>`}${d.inscripciones_abiertas === false ? `<br><span class="badge">${esc(t('regs_closed_badge'))}</span>` : ''}</span>
       <span class="hide-m ${clsBar}"><span class="bar"><i style="width:${pct}%"></i></span><span class="occ">${esc(t('seats_line', { n: ocup, a: d.aforo, p: pct }))}</span></span>
       <span class="badge" style="${lleno ? 'background:var(--grana);color:#fff' : ''}">${lleno ? esc(t('complete')) : pct + '%'}</span>
     </summary>
@@ -1233,15 +1412,18 @@ function filaEvento(d, past) {
           <span class="badge">${esc(t('n_companies', { n: empresas }))}</span>
           <span class="badge">${esc(t('n_individuals', { n: ins.filter(i => i.tipo === 'particular').length }))}</span>
           ${porProd.map(([p, n]) => `<span class="badge">${esc(p)}: ${n}</span>`).join('')}
+          ${marcados.length ? `<span class="badge" style="background:var(--ok);color:#fff">${esc(t('att_summary', { a: vinieron, n: ocup }))}</span>` : ''}
+          ${esp.length ? `<span class="badge" style="background:var(--gold);color:#1a1300">${esc(t('waitlist_h', { n: esp.length }))}</span>` : ''}
         </div>
         <button type="button" class="btn btn-ghost btn-sm" data-act="csv-ev" data-id="${esc(d.id)}" ${ins.length ? '' : 'disabled'}>${esc(t('dl_list'))}</button>
       </div>
       ${ins.length ? `
       <div class="table-wrap"><table class="cards">
-        <thead><tr><th>${esc(t('th_name'))}</th><th>${esc(t('company'))}</th><th>${esc(t('role'))}</th><th>${esc(t('email'))}</th><th>${esc(t('phone'))}</th><th>${esc(t('th_people'))}</th><th>${esc(colProducto())}</th><th>${esc(t('th_invited'))}</th><th>${esc(t('th_signed'))}</th><th></th></tr></thead>
+        <thead><tr><th>${esc(t('th_name'))}</th><th>${esc(t('th_attended'))}</th><th>${esc(t('company'))}</th><th>${esc(t('role'))}</th><th>${esc(t('email'))}</th><th>${esc(t('phone'))}</th><th>${esc(t('th_people'))}</th><th>${esc(colProducto())}</th><th>${esc(t('th_invited'))}</th><th>${esc(t('th_signed'))}</th><th></th></tr></thead>
         <tbody>${ins.map(i => `
           <tr>
             <td class="nowrap lead" data-l="">${esc(i.nombre)} ${esc(i.apellido)}</td>
+            <td class="nowrap" data-l="${esc(t('th_attended'))}">${attBtns(i)}</td>
             <td data-l="${esc(t('company'))}">${i.tipo === 'empresa' ? esc(i.empresa) : tipoBadge()}</td>
             <td data-l="${esc(t('role'))}">${esc(i.cargo || '')}</td>
             <td data-l="${esc(t('email'))}"><a href="mailto:${esc(i.email)}">${esc(i.email)}</a></td>
@@ -1253,6 +1435,25 @@ function filaEvento(d, past) {
             <td class="acc" data-l=""><button type="button" class="link-danger" data-act="del-ins" data-id="${esc(i.id)}">${esc(t('delete'))}</button></td>
           </tr>`).join('')}
         </tbody></table></div>` : `<p class="empty">${esc(t('no_signups'))}</p>`}
+      ${esp.length ? `
+      <h3 class="subhead">${esc(t('waitlist_h', { n: esp.length }))}</h3>
+      <div class="table-wrap"><table class="cards">
+        <thead><tr><th>#</th><th>${esc(t('th_name'))}</th><th>${esc(t('company'))}</th><th>${esc(t('email'))}</th><th>${esc(t('phone'))}</th><th>${esc(t('th_people'))}</th><th>${esc(t('th_signed'))}</th><th></th></tr></thead>
+        <tbody>${esp.map((e, k) => `
+          <tr>
+            <td data-l="#">${k + 1}</td>
+            <td class="nowrap lead" data-l="">${esc(e.nombre)} ${esc(e.apellido)}</td>
+            <td data-l="${esc(t('company'))}">${e.tipo === 'empresa' ? `<span>${esc(e.empresa)}<br><span class="evsub">${esc(e.cargo || '')}</span></span>` : tipoBadge()}</td>
+            <td data-l="${esc(t('email'))}"><a href="mailto:${esc(e.email)}">${esc(e.email)}</a></td>
+            <td class="nowrap" data-l="${esc(t('phone'))}"><a href="tel:${esc(e.telefono.replace(/[^+0-9]/g, ''))}">${esc(e.telefono)}</a></td>
+            <td data-l="${esc(t('th_people'))}">${e.asistentes || 1}</td>
+            <td class="nowrap" data-l="${esc(t('th_signed'))}">${esc(cuando(e.created_at))}</td>
+            <td class="acc nowrap" data-l="">
+              <button type="button" class="btn btn-ghost btn-sm" data-act="mover-esp" data-id="${esc(e.id)}">${esc(t('move_to_signups'))}</button>
+              <button type="button" class="link-danger" data-act="del-esp" data-id="${esc(e.id)}">${esc(t('delete'))}</button>
+            </td>
+          </tr>`).join('')}
+        </tbody></table></div>` : ''}
     </div>
   </details>`;
 }
@@ -1319,37 +1520,117 @@ function vistaSolicitudes(kind) {
       </tbody></table></div>` : `<p class="empty">${esc(t(esEvt ? 'no_events' : 'no_meetings'))}</p>`}`;
 }
 
+function borradorNuevo() {
+  return { id: null, fecha: '', hora_inicio: '09:00', hora_fin: '10:30', lugar: CONFIG.LUGAR_DEFECTO, aforo: CONFIG.AFORO_DEFECTO,
+           titulo_ca: '', titulo_en: '', titulo_es: '', color: COLOR_DEFECTO,
+           max_por_empresa: CONFIG.MAX_POR_EMPRESA, inscripciones_abiertas: true };
+}
+function borradorDesdeForm(form) {
+  const fd = new FormData(form);
+  const v = k => (fd.get(k) || '').toString().trim();
+  const sw = v('color_sw');
+  return {
+    id: adminState.borrador.id,
+    fecha: v('fecha'), hora_inicio: v('hora_inicio'), hora_fin: v('hora_fin'), lugar: v('lugar'),
+    aforo: parseInt(v('aforo'), 10) || '',
+    titulo_ca: v('titulo_ca'), titulo_en: v('titulo_en'), titulo_es: v('titulo_es'),
+    color: colorValido(sw === 'custom' ? v('color_custom') : sw),
+    max_por_empresa: parseInt(v('max_por_empresa'), 10) || CONFIG.MAX_POR_EMPRESA,
+    inscripciones_abiertas: fd.get('abiertas') === 'on'
+  };
+}
+function previewHTML(b) {
+  const d = { ...b, fecha: b.fecha || hoyISO(), aforo: b.aforo || 1, ocupadas: b.id ? plazasDe(b.id) : 0 };
+  return `<p class="legend">${esc(t('preview'))}</p><div class="preview">${ticketHTML(d)}</div>`;
+}
+
 function vistaFechas() {
-  const orden = [...D.desayunos].sort((a, b) => b.fecha.localeCompare(a.fecha));
+  const b = adminState.borrador || (adminState.borrador = borradorNuevo());
+  const editando = !!b.id;
+  const esPreset = COLORES.includes(b.color.toUpperCase());
+  const orden = [...D.desayunos].sort((a, c) => c.fecha.localeCompare(a.fecha));
+  const campoTitulo = (l, nom) => `<label class="f"><span>${nom}</span><input name="titulo_${l}" maxlength="80" value="${esc(b['titulo_' + l] || '')}" placeholder="${esc(t('title_ph'))}"></label>`;
   return `
-    <div class="card" style="margin-bottom:24px">
+    <div class="card" style="margin-bottom:24px" id="cardFecha">
       <form id="formFecha">
-        <p class="legend">${esc(t('add_breakfast'))}</p>
-        <div class="grid">
-          <label class="f"><span>${esc(t('th_date'))}</span><input type="date" name="fecha" min="${hoyISO()}" required></label>
-          <label class="f"><span>${esc(t('f_start'))}</span><input type="time" name="hora_inicio" value="09:00" required></label>
-          <label class="f"><span>${esc(t('f_end'))}</span><input type="time" name="hora_fin" value="10:30" required></label>
-          <label class="f"><span>${esc(t('th_place'))}</span><input name="lugar" value="${esc(CONFIG.LUGAR_DEFECTO)}" required></label>
-          <label class="f"><span>${esc(t('th_capacity'))}</span><input type="number" name="aforo" min="1" max="500" value="${CONFIG.AFORO_DEFECTO}" required></label>
+        <p class="legend" style="font-size:17px">${esc(t(editando ? 'edit_event' : 'add_breakfast'))}</p>
+        <div class="ev-form-grid">
+          <div>
+            <div class="grid">
+              <label class="f"><span>${esc(t('th_date'))}</span><input type="date" name="fecha" ${editando ? '' : `min="${hoyISO()}"`} value="${esc(b.fecha)}" required></label>
+              <label class="f"><span>${esc(t('f_start'))}</span><input type="time" name="hora_inicio" value="${esc(hora(b.hora_inicio))}" required></label>
+              <label class="f"><span>${esc(t('f_end'))}</span><input type="time" name="hora_fin" value="${esc(hora(b.hora_fin))}" required></label>
+              <label class="f"><span>${esc(t('th_place'))}</span><input name="lugar" maxlength="120" value="${esc(b.lugar)}" required></label>
+              <label class="f"><span>${esc(t('th_capacity'))}</span><input type="number" name="aforo" min="1" max="500" value="${esc(b.aforo)}" required></label>
+              <label class="f"><span>${esc(t('max_company'))}</span><input type="number" name="max_por_empresa" min="1" max="25" value="${esc(b.max_por_empresa)}" required></label>
+            </div>
+            <label class="check" style="color:var(--text);font-weight:600"><input type="checkbox" name="abiertas" ${b.inscripciones_abiertas !== false ? 'checked' : ''}><span>${esc(t('regs_open_q'))}</span></label>
+            <p class="legend mt">${esc(t('title_opt'))}</p>
+            <div class="grid">${campoTitulo('ca', 'Català')}${campoTitulo('en', 'English')}${campoTitulo('es', 'Español')}</div>
+            <p class="hint">${esc(t('title_hint'))}</p>
+            <fieldset class="mt">
+              <legend class="legend">${esc(t('color'))}</legend>
+              <div class="swatches">
+                ${COLORES.map(c => `<label class="sw" title="${c}"><input type="radio" name="color_sw" value="${c}" ${b.color.toUpperCase() === c ? 'checked' : ''} aria-label="${c}"><span style="--c:${c}"></span></label>`).join('')}
+                <label class="sw-custom"><input type="radio" name="color_sw" value="custom" ${esPreset ? '' : 'checked'} style="position:absolute;opacity:0;width:1px;height:1px">
+                  <input type="color" name="color_custom" value="${esc(b.color)}" aria-label="${esc(t('custom_color'))}">${esc(t('custom_color'))}</label>
+              </div>
+            </fieldset>
+          </div>
+          <div id="previewEv">${previewHTML(b)}</div>
         </div>
-        <div class="actions"><button class="btn btn-primary" type="submit">${esc(t('btn_add'))}</button></div>
+        <div class="actions">
+          <button class="btn btn-primary" type="submit">${esc(t(editando ? 'btn_save' : 'btn_add'))}</button>
+          ${editando ? `<button class="btn btn-ghost" type="button" data-act="cancel-ev">${esc(t('btn_cancel'))}</button>` : ''}
+        </div>
       </form>
     </div>
     ${orden.length ? `
     <div class="table-wrap"><table class="cards">
-      <thead><tr><th>${esc(t('th_date'))}</th><th>${esc(t('th_schedule'))}</th><th>${esc(t('th_place'))}</th><th>${esc(t('th_capacity'))}</th><th>${esc(t('th_count'))}</th><th>${esc(t('th_visible'))}</th><th></th></tr></thead>
+      <thead><tr><th>${esc(t('th_date'))}</th><th>${esc(t('th_title'))}</th><th>${esc(t('th_schedule'))}</th><th>${esc(t('th_place'))}</th><th>${esc(t('th_capacity'))}</th><th>${esc(t('th_count'))}</th><th>${esc(t('regs_label'))}</th><th>${esc(t('th_visible'))}</th><th></th></tr></thead>
       <tbody>${orden.map(d => `
         <tr>
-          <td class="nowrap lead" data-l="">${esc(cap(fecha(d.fecha, { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' })))}</td>
+          <td class="nowrap lead" data-l=""><span class="dot" style="--c:${colorValido(d.color)}"></span>${esc(cap(fecha(d.fecha, { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' })))}</td>
+          <td data-l="${esc(t('th_title'))}">${esc(tituloDe(d)) || '<span class="evsub">–</span>'}</td>
           <td class="nowrap" data-l="${esc(t('th_schedule'))}">${esc(t('time_range', { a: hora(d.hora_inicio), b: hora(d.hora_fin) }))}</td>
           <td data-l="${esc(t('th_place'))}">${esc(d.lugar)}</td>
           <td data-l="${esc(t('th_capacity'))}">${d.aforo}</td>
           <td data-l="${esc(t('th_count'))}">${plazasDe(d.id)}</td>
+          <td data-l="${esc(t('regs_label'))}"><button type="button" class="btn btn-ghost btn-sm" data-act="toggle-ins" data-id="${esc(d.id)}">${esc(t(d.inscripciones_abiertas !== false ? 'regs_open' : 'regs_closed'))}</button></td>
           <td data-l="${esc(t('th_visible'))}"><button type="button" class="btn btn-ghost btn-sm" data-act="toggle-ev" data-id="${esc(d.id)}">${esc(t(d.activo ? 'vis_yes' : 'vis_no'))}</button></td>
-          <td class="acc" data-l=""><button type="button" class="link-danger" data-act="del-ev" data-id="${esc(d.id)}">${esc(t('delete'))}</button></td>
+          <td class="acc nowrap" data-l="">
+            <button type="button" class="btn btn-ghost btn-sm" data-act="edit-ev" data-id="${esc(d.id)}">${esc(t('edit'))}</button>
+            <button type="button" class="btn btn-ghost btn-sm" data-act="dup-ev" data-id="${esc(d.id)}">${esc(t('duplicate'))}</button>
+            <button type="button" class="link-danger" data-act="del-ev" data-id="${esc(d.id)}">${esc(t('delete'))}</button>
+          </td>
         </tr>`).join('')}
       </tbody></table></div>` : ''}`;
 }
+
+function vistaTextos() {
+  const idx = IDIOMAS.indexOf(lang);
+  const def = (k, l) => I18N[k][IDIOMAS.indexOf(l)].replace(/<br\s*\/?>/g, '\n');
+  return `<p class="hint" style="margin:0 0 18px;font-size:14px">${esc(t('txt_hint'))}</p>` + TEXTOS_EDITABLES.map(([k, etiq]) => {
+    const o = TEXTOS[k] || {};
+    const dr = adminState.txtDraft[k] || {};
+    const largo = /lead|text/.test(k);
+    const campo = (l, nom) => `<label class="f"><span>${nom}</span><textarea data-txt="${k}" data-lg="${l}" rows="${largo ? 4 : 2}" placeholder="${esc(def(k, l))}">${esc(dr[l] ?? (o[l] || ''))}</textarea></label>`;
+    return `
+    <div class="card txt-card" data-k="${k}">
+      <div class="txt-head"><strong>${esc(etiq[idx])}</strong>${TEXTOS[k] ? `<span class="badge" style="background:var(--blau);color:#fff">${esc(t('txt_custom'))}</span>` : ''}</div>
+      <div class="grid">${campo('ca', 'Català')}${campo('en', 'English')}${campo('es', 'Español')}</div>
+      <div class="actions" style="margin-top:14px">
+        <button type="button" class="btn btn-primary btn-sm" data-act="save-txt" data-k="${k}">${esc(t('btn_save'))}</button>
+        ${TEXTOS[k] ? `<button type="button" class="btn btn-ghost btn-sm" data-act="reset-txt" data-k="${k}">${esc(t('txt_reset'))}</button>` : ''}
+      </div>
+    </div>`;
+  }).join('');
+}
+document.addEventListener('input', e => {
+  const ta = e.target.closest && e.target.closest('textarea[data-txt]');
+  if (!ta) return;
+  (adminState.txtDraft[ta.dataset.txt] ||= {})[ta.dataset.lg] = ta.value;
+});
 
 const colProducto = () => ({ ca: 'Producte', en: 'Product', es: 'Producto' })[lang];
 
@@ -1366,7 +1647,7 @@ const verTipo = x => x === 'particular' ? t('individual') : t('company');
 const colsIns = () => [
   [t('th_bdate'), i => evPorId(i.desayuno_id)?.fecha || ''], [t('th_type'), i => verTipo(i.tipo)], [t('company'), 'empresa'], [t('role'), 'cargo'],
   [t('first_name'), 'nombre'], [t('last_name'), 'apellido'], [t('email'), 'email'], [t('phone'), 'telefono'], [colProducto(), 'producto'],
-  [t('th_people'), i => i.asistentes || 1], [t('th_invited'), i => i.comercial ? verComercial(i.comercial) : t('nobody')], [t('th_signed'), i => cuando(i.created_at)]
+  [t('th_people'), i => i.asistentes || 1], [t('th_attended'), i => i.asistio === true ? t('att_yes') : i.asistio === false ? t('att_no') : ''], [t('th_invited'), i => i.comercial ? verComercial(i.comercial) : t('nobody')], [t('th_signed'), i => cuando(i.created_at)]
 ];
 const colsEvt = () => [
   [t('th_received'), r => cuando(r.created_at)], [t('th_status'), r => t('st_' + r.estado)], [t('th_rep'), r => verComercial(r.comercial)], [t('th_type'), r => verTipo(r.tipo)],
@@ -1415,10 +1696,62 @@ document.addEventListener('click', async e => {
         await api.actualizarDesayuno(id, { activo: !ev.activo }); await cargarAdmin();
         toast(t(ev.activo ? 't_hidden' : 't_shown')); break;
       }
+      case 'asis': {
+        const i = D.inscripciones.find(x => x.id === id);
+        const v = b.dataset.v === '1';
+        const nuevo = i.asistio === v ? null : v;   // tornar a clicar desmarca
+        await api.actualizarInscripcion(id, { asistio: nuevo }); i.asistio = nuevo; renderTab(); break;
+      }
+      case 'toggle-ins': {
+        const ev = evPorId(id);
+        const abrir = ev.inscripciones_abiertas === false;
+        await api.actualizarDesayuno(id, { inscripciones_abiertas: abrir }); await cargarAdmin();
+        toast(t(abrir ? 't_regs_open' : 't_regs_closed')); break;
+      }
+      case 'mover-esp': {
+        const e = D.espera.find(x => x.id === id);
+        try { await api.moverEspera(e); }
+        catch (x) {
+          console.error(x); const c = codigoDe(x);
+          toast(['AFORO_COMPLETO', 'PLAZAS_INSUFICIENTES'].includes(c) ? t('t_move_full') : mensajeError(c)); return;
+        }
+        await cargarAdmin(); toast(t('t_moved')); break;
+      }
+      case 'del-esp': {
+        if (!confirm(t('c_del_esp'))) return;
+        await api.borrarEspera(id); await cargarAdmin(); toast(t('t_esp_deleted')); break;
+      }
+      case 'save-txt': {
+        const k = b.dataset.k, card = b.closest('.txt-card');
+        const v = {}; card.querySelectorAll('textarea[data-txt]').forEach(ta => { v[ta.dataset.lg] = ta.value.trim() || null; });
+        if (!v.ca && !v.en && !v.es) await api.borrarTexto(k); else await api.guardarTexto(k, v);
+        if (!v.ca && !v.en && !v.es) delete TEXTOS[k]; else TEXTOS[k] = v;
+        delete adminState.txtDraft[k];
+        aplicarIdioma(); toast(t('t_txt_saved')); break;
+      }
+      case 'reset-txt': {
+        const k = b.dataset.k;
+        if (!confirm(t('c_txt_reset'))) return;
+        await api.borrarTexto(k); delete TEXTOS[k]; delete adminState.txtDraft[k];
+        aplicarIdioma(); toast(t('t_txt_reset')); break;
+      }
+      case 'edit-ev': case 'dup-ev': {
+        const ev = evPorId(id);
+        const copia = { ...borradorNuevo(), ...ev, hora_inicio: hora(ev.hora_inicio), hora_fin: hora(ev.hora_fin),
+          titulo_ca: ev.titulo_ca || '', titulo_en: ev.titulo_en || '', titulo_es: ev.titulo_es || '', color: colorValido(ev.color),
+          max_por_empresa: ev.max_por_empresa || CONFIG.MAX_POR_EMPRESA, inscripciones_abiertas: ev.inscripciones_abiertas !== false };
+        if (b.dataset.act === 'dup-ev') { copia.id = null; copia.fecha = ''; toast(t('t_dup')); }
+        adminState.borrador = copia; renderTab();
+        $('#cardFecha').scrollIntoView({ block: 'start' });
+        break;
+      }
+      case 'cancel-ev': adminState.borrador = borradorNuevo(); renderTab(); break;
       case 'del-ev': {
         const n = plazasDe(id);
         if (!confirm(n ? t('c_del_ev_n', { n }) : t('c_del_ev'))) return;
-        await api.borrarDesayuno(id); await cargarAdmin(); toast(t('t_ev_deleted')); break;
+        await api.borrarDesayuno(id);
+        if (adminState.borrador && adminState.borrador.id === id) adminState.borrador = borradorNuevo();
+        await cargarAdmin(); toast(t('t_ev_deleted')); break;
       }
     }
   } catch (x) { console.error(x); toast(t('t_action_error')); }
@@ -1440,14 +1773,32 @@ document.addEventListener('change', async e => {
   }
 });
 
+// Vista prèvia en directe i borrador (es conserva si es canvia d'idioma)
+['input', 'change'].forEach(tipo => document.addEventListener(tipo, e => {
+  const form = e.target.closest && e.target.closest('#formFecha');
+  if (!form) return;
+  if (e.target.name === 'color_custom') form.querySelector('input[name="color_sw"][value="custom"]').checked = true;
+  adminState.borrador = borradorDesdeForm(form);
+  $('#previewEv').innerHTML = previewHTML(adminState.borrador);
+}));
+
 document.addEventListener('submit', async e => {
   if (e.target.id !== 'formFecha') return;
   e.preventDefault();
-  const fd = new FormData(e.target);
-  const nuevo = { fecha: fd.get('fecha'), hora_inicio: fd.get('hora_inicio'), hora_fin: fd.get('hora_fin'), lugar: fd.get('lugar').trim(), aforo: parseInt(fd.get('aforo'), 10) };
-  if (nuevo.hora_fin <= nuevo.hora_inicio) { toast(t('t_end_after')); return; }
-  try { await api.crearDesayuno(nuevo); await cargarAdmin(); toast(t('t_added')); }
-  catch (x) { console.error(x); toast(t('t_create_error')); }
+  const b = borradorDesdeForm(e.target);
+  if (b.hora_fin <= b.hora_inicio) { toast(t('t_end_after')); return; }
+  if (b.id && b.aforo < plazasDe(b.id)) { toast(t('t_aforo_low', { n: plazasDe(b.id) })); return; }
+  const datos = {
+    fecha: b.fecha, hora_inicio: b.hora_inicio, hora_fin: b.hora_fin, lugar: b.lugar, aforo: b.aforo,
+    titulo_ca: b.titulo_ca || null, titulo_en: b.titulo_en || null, titulo_es: b.titulo_es || null, color: b.color,
+    max_por_empresa: b.max_por_empresa, inscripciones_abiertas: b.inscripciones_abiertas
+  };
+  const btn = e.target.querySelector('button[type="submit"]'); btn.disabled = true;
+  try {
+    if (b.id) await api.actualizarDesayuno(b.id, datos); else await api.crearDesayuno(datos);
+    adminState.borrador = borradorNuevo();
+    await cargarAdmin(); toast(t(b.id ? 't_saved_ev' : 't_added'));
+  } catch (x) { console.error(x); toast(t('t_create_error')); btn.disabled = false; }
 });
 
 /* =====================================================================
@@ -1457,7 +1808,7 @@ function aplicarIdioma() {
   document.documentElement.lang = lang;
   document.title = t('doc_title');
   document.querySelectorAll('[data-i18n]').forEach(el => { el.textContent = t(el.dataset.i18n); });
-  document.querySelectorAll('[data-i18n-html]').forEach(el => { el.innerHTML = t(el.dataset.i18nHtml); });
+  document.querySelectorAll('[data-i18n-html]').forEach(el => { el.innerHTML = tHtml(el.dataset.i18nHtml); });
   document.querySelectorAll('[data-i18n-ph]').forEach(el => { el.placeholder = t(el.dataset.i18nPh); });
   document.querySelectorAll('[data-i18n-title]').forEach(el => { el.title = t(el.dataset.i18nTitle); });
   document.querySelectorAll('[data-i18n-aria]').forEach(el => { el.setAttribute('aria-label', t(el.dataset.i18nAria)); });
@@ -1504,6 +1855,7 @@ $('#formEvento').addEventListener('submit', enviarEvento);
 aplicarIdioma();
 window.addEventListener('hashchange', route);
 route();
+api.textos().then(rows => { TEXTOS = Object.fromEntries((rows || []).map(r => [r.clave, r])); aplicarIdioma(); }).catch(e => console.error(e));
 </script>
 </body>
 </html>
